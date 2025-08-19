@@ -1,8 +1,6 @@
 package com.desafio.votacao.controller;
-
 import com.desafio.votacao.model.SessaoVotacao;
 import com.desafio.votacao.service.SessaoVotacaoService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
