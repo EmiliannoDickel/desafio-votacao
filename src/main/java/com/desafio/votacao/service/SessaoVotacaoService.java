@@ -1,5 +1,6 @@
 package com.desafio.votacao.service;
 
+import com.desafio.votacao.exception.SessaoAbertaException;
 import com.desafio.votacao.model.Pauta;
 import com.desafio.votacao.model.SessaoVotacao;
 import com.desafio.votacao.repository.PautaRepository;
@@ -24,7 +25,7 @@ public class SessaoVotacaoService {
         Pauta pauta = pautaRepository.findById(id).orElseThrow(()-> new RuntimeException("Pauta não encontrada"));
 
         if (pauta.getSessao() != null) {
-            throw new IllegalStateException("Sessão já está aberta para está pauta!");
+            throw new SessaoAbertaException("Sessão já está aberta para está pauta!");
         }
         LocalDateTime agora = LocalDateTime.now();
         LocalDateTime duracao = agora.plusMinutes(duracaoPauta != null ? duracaoPauta : 1);
