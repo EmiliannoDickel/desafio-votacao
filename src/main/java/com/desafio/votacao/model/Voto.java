@@ -15,9 +15,14 @@ public class Voto {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String cpfAssociado;
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private EscolhaVoto voto;
+
     @ManyToOne
     @JoinColumn(name = "pauta_id")
     private Pauta pauta;
