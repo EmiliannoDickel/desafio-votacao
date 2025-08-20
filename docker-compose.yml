@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:12-alpine
+    environment:
+      POSTGRES_USER: dkl
+      POSTGRES_PASSWORD: dkl
+      POSTGRES_DB: apivotacao
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+volumes:
+  pg_data:
