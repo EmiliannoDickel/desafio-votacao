@@ -1,7 +1,7 @@
 package com.desafio.votacao.exception;
 
-public class VotoRegistradoException extends IllegalStateException{
-    public VotoRegistradoException(String mensagem){
+public class VotoJaRegistradoException extends IllegalStateException{
+    public VotoJaRegistradoException(String mensagem){
         super(mensagem);
     }
 }
