@@ -1,6 +1,8 @@
 package com.desafio.votacao.service;
 
-import com.desafio.votacao.exception.SessaoAbertaException;
+import com.desafio.votacao.exception.PautaNaoEncontradaException;
+import com.desafio.votacao.exception.SessaoFechadaException;
+import com.desafio.votacao.exception.SessaoJaAbertaException;
 import com.desafio.votacao.model.Pauta;
 import com.desafio.votacao.model.SessaoVotacao;
 import com.desafio.votacao.repository.PautaRepository;
@@ -12,26 +14,34 @@ import java.time.LocalDateTime;
 
 @Service
 public class SessaoVotacaoService {
-    private SessaoVotacaoRepository sessaoVotacaoRepository;
-    private PautaRepository pautaRepository;
+    private final PautaRepository pautaRepository;
 
     @Autowired
-    public SessaoVotacaoService(SessaoVotacaoRepository sessaoVotacaoRepository, PautaRepository pautaRepository) {
-        this.sessaoVotacaoRepository = sessaoVotacaoRepository;
+    public SessaoVotacaoService(PautaRepository pautaRepository) {
         this.pautaRepository = pautaRepository;
     }
 
     public SessaoVotacao abrirSessao(Long id, Integer duracaoPauta) {
-        Pauta pauta = pautaRepository.findById(id).orElseThrow(()-> new RuntimeException("Pauta não encontrada"));
-
-        if (pauta.getSessao() != null) {
-            throw new SessaoAbertaException("Sessão já está aberta para está pauta!");
+        Pauta pauta = pautaRepository.findById(id).orElseThrow(()-> new PautaNaoEncontradaException("Pauta não encontrada"));
+        SessaoVotacao sessao = pauta.getSessao();
+        if (sessao != null) {
+            if (sessao.estaAberta()) {
+                throw new SessaoJaAbertaException("Sessão já está aberta para está pauta!");
+            } else {
+                throw new SessaoFechadaException("Sessão já foi fechada para esta pauta!");
+            }
         }
+
         LocalDateTime agora = LocalDateTime.now();
         LocalDateTime duracao = agora.plusMinutes(duracaoPauta != null ? duracaoPauta : 1);
-        SessaoVotacao sessao = SessaoVotacao.builder().pauta(pauta).dataAbertura(agora).dataFechamento(duracao).build();
-        pauta.setSessao(sessao);
+        SessaoVotacao novaSessao = SessaoVotacao.builder()
+                .pauta(pauta)
+                .dataAbertura(agora)
+                .dataFechamento(duracao)
+                .build();
+        pauta.setSessao(novaSessao);
         pautaRepository.save(pauta);
-        return sessao;
+        return novaSessao;
     }
+
 }
