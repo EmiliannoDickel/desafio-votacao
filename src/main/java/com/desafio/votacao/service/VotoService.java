@@ -2,8 +2,11 @@ package com.desafio.votacao.service;
 
 import com.desafio.votacao.dto.ResultadoVotacao;
 import com.desafio.votacao.enums.EscolhaVoto;
-import com.desafio.votacao.exception.VotoRegistradoException;
+import com.desafio.votacao.exception.PautaNaoEncontradaException;
+import com.desafio.votacao.exception.SessaoFechadaException;
+import com.desafio.votacao.exception.VotoJaRegistradoException;
 import com.desafio.votacao.model.Pauta;
+import com.desafio.votacao.model.SessaoVotacao;
 import com.desafio.votacao.model.Voto;
 import com.desafio.votacao.repository.PautaRepository;
 import com.desafio.votacao.repository.VotoRepository;
@@ -22,15 +25,25 @@ public class VotoService {
         this.pautaRepository = pautaRepository;
     }
 
-    public void registrarVoto (Voto voto){
+    public void registrarVoto (Long id, Voto voto){
+        Pauta pauta = pautaRepository.findById(id).orElseThrow(() -> new PautaNaoEncontradaException("Pauta não encontrada"));
+        SessaoVotacao sessao = pauta.getSessao();
+
+        if (sessao == null) {
+            throw new IllegalStateException("Sessão de votação não encontrada para a pauta");
+        }
+        if (!sessao.estaAberta()){
+            throw new SessaoFechadaException("A sessão de votação para a pauta " + id + " está fechada.");
+        }
+        voto.setPauta(pauta);
         if (votoRepository.existsByCpfAssociadoAndPautaId(voto.getCpfAssociado(), voto.getPauta().getId())){
-            throw new VotoRegistradoException("Associado já votou nessa pauta");
+            throw new VotoJaRegistradoException("Associado já votou nessa pauta");
         }
         votoRepository.save(voto);
     }
 
     public ResultadoVotacao contabilizarVotos (Long pautaId){
-        Pauta pauta = pautaRepository.findById(pautaId).orElseThrow(() -> new IllegalStateException("Pauta não encotrada"));
+        Pauta pauta = pautaRepository.findById(pautaId).orElseThrow(() -> new PautaNaoEncontradaException("Pauta não encotrada"));
         List<Voto> votos = votoRepository.findByPautaId(pautaId);
 
         long totalSim = votos.stream().filter(v -> v.getVoto() == EscolhaVoto.SIM).count();
@@ -38,7 +51,5 @@ public class VotoService {
 
         return new ResultadoVotacao (pautaId, pauta.getTitulo(), totalSim, totalNao);
     }
-
-
 
 }
