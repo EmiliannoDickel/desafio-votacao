@@ -12,17 +12,14 @@ import org.springframework.web.bind.annotation.*;
 public class VotoController {
 
     private final VotoService votoService;
-    private final PautaRepository pautaRepository;
 
-    public VotoController(VotoService votoService, PautaRepository pautaRepository) {
+    public VotoController(VotoService votoService) {
         this.votoService = votoService;
-        this.pautaRepository = pautaRepository;
     }
 
     @PostMapping("/{id}")
     public ResponseEntity<Void> votar(@PathVariable Long id, @RequestBody Voto voto) {
-        voto.setPauta(pautaRepository.getReferenceById(id));
-        votoService.registrarVoto(voto);
+        votoService.registrarVoto(id,voto);
         return ResponseEntity.ok().build();
     }
 
