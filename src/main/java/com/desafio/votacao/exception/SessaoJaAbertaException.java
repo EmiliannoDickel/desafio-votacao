@@ -1,7 +1,7 @@
 package com.desafio.votacao.exception;
 
-public class SessaoAbertaException extends IllegalStateException {
-    public SessaoAbertaException(String mensagem) {
+public class SessaoJaAbertaException extends IllegalStateException {
+    public SessaoJaAbertaException(String mensagem) {
         super(mensagem);
     }
 }
