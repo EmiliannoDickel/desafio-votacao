@@ -23,4 +23,17 @@ public class ManipuladorGlobalDeExcecoes {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
+    @ExceptionHandler({
+            CampoObrigatorioException.class,
+            PautaNaoEncontradaException.class,
+            SessaoFechadaException.class,
+            SessaoJaAbertaException.class,
+            VotoJaRegistradoException.class
+    })
+    public ResponseEntity<String> tratarExcecoesDeRequisicaoInvalida(RuntimeException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+
+
 }
