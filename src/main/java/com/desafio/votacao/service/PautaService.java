@@ -1,5 +1,8 @@
 package com.desafio.votacao.service;
+import com.desafio.votacao.dto.CriarPautaDTO;
+import com.desafio.votacao.dto.PautaResultadoDTO;
 import com.desafio.votacao.exception.CampoObrigatorioException;
+import com.desafio.votacao.exception.PautaNaoEncontradaException;
 import com.desafio.votacao.model.Pauta;
 import com.desafio.votacao.repository.PautaRepository;
 import org.springframework.stereotype.Service;
@@ -13,14 +16,14 @@ public class PautaService {
         this.pautaRepository = pautaRepository;
     }
 
-    public Pauta salvar (Pauta pauta) {
-        if (pauta.getTitulo() == null || pauta.getTitulo().isEmpty()) {
-            throw new CampoObrigatorioException("Título não informado ou em branco!");
-        }
-        if (pauta.getDescricao() == null || pauta.getDescricao().isEmpty()) {
-            throw new CampoObrigatorioException("Descricão não informada ou em branco!");
-        }
-        return pautaRepository.save(pauta);
+    public PautaResultadoDTO salvar (CriarPautaDTO criarPautaDTO) {
+        Pauta pauta = pautaRepository.save(criarPautaDTO.paraPauta());
+        return PautaResultadoDTO.dePauta(pauta);
+    }
+
+    public PautaResultadoDTO getPauta (Long pautaId) {
+        Pauta pauta = pautaRepository.findById(pautaId).orElseThrow(() -> new PautaNaoEncontradaException("Pauta não encontrada"));
+        return PautaResultadoDTO.dePauta(pauta);
     }
 }
 
