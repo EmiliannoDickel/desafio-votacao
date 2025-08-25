@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ResultadoVotacao {
+public class ResultadoVotacaoDTO {
     private Long pautaId;
     private String tituloPauta;
     private Long totalVotos;
@@ -13,7 +13,7 @@ public class ResultadoVotacao {
     private Long totalNao;
     private String resultadoFinal;
 
-    public ResultadoVotacao(Long pautaId, String tituloPauta, long totalSim, long totalNao) {
+    public ResultadoVotacaoDTO(Long pautaId, String tituloPauta, long totalSim, long totalNao) {
         this.pautaId = pautaId;
         this.tituloPauta = tituloPauta;
         this.totalSim = totalSim;

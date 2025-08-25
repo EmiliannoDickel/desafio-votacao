@@ -1,5 +1,5 @@
 package com.desafio.votacao.enums;
 
-public enum EscolhaVoto {
+public enum EscolhaVotoEnum {
     SIM, NAO
 }
