@@ -1,7 +1,13 @@
 package com.desafio.votacao.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,9 +20,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table (name = "sessao_votacao")
+@Table(name = "sessao_votacao")
 public class SessaoVotacao {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private LocalDateTime dataAbertura;
@@ -27,7 +34,7 @@ public class SessaoVotacao {
     @JoinColumn(name = "pauta_id", nullable = false, unique = true)
     private Pauta pauta;
 
-    public boolean estaAberta(){
+    public boolean estaAberta() {
         LocalDateTime time = LocalDateTime.now();
         return time.isAfter(dataAbertura) && time.isBefore(dataFechamento);
     }
