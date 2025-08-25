@@ -1,26 +1,47 @@
 package com.desafio.votacao.exception;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.ErrorResponse;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.View;
+
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ManipuladorGlobalDeExcecoes {
 
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<String> tratarIllegalStateException(IllegalStateException e){
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+    private final View error;
+
+    public ManipuladorGlobalDeExcecoes(View error) {
+        this.error = error;
     }
 
-    @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<String> tratarNullPointerException(NullPointerException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ProblemDetail> tratarHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(
+                        ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Corpo de entrada inválido")
+                );
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> tratarRuntimeException(RuntimeException e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ProblemDetail> tratarMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        String error = e.getBindingResult()
+                .getAllErrors()
+                .stream()
+                .map(ObjectError::getDefaultMessage)
+                .collect(Collectors.joining(", "));
+
+        pd.setDetail(error);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(pd);
     }
 
     @ExceptionHandler({
@@ -30,10 +51,7 @@ public class ManipuladorGlobalDeExcecoes {
             SessaoJaAbertaException.class,
             VotoJaRegistradoException.class
     })
-    public ResponseEntity<String> tratarExcecoesDeRequisicaoInvalida(RuntimeException e){
+    public ResponseEntity<String> tratarExcecoesDeRequisicaoInvalida(RuntimeException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
-
-
-
 }
