@@ -1,5 +1,6 @@
 package com.desafio.votacao.dto;
 
+import com.desafio.votacao.enums.ResultadoEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +12,7 @@ public class ResultadoVotacaoDTO {
     private Long totalVotos;
     private Long totalSim;
     private Long totalNao;
-    private String resultadoFinal;
+    private ResultadoEnum resultadoFinal;
 
     public ResultadoVotacaoDTO(Long pautaId, String tituloPauta, long totalSim, long totalNao) {
         this.pautaId = pautaId;
@@ -22,13 +23,13 @@ public class ResultadoVotacaoDTO {
         this.resultadoFinal = calcularResultadoFinal(totalSim, totalNao);
     }
 
-    public String calcularResultadoFinal(long totalSim, long totalNao) {
+    public ResultadoEnum calcularResultadoFinal(long totalSim, long totalNao) {
         if (totalSim > totalNao) {
-            return "Aprovada!";
+            return ResultadoEnum.APROVADO;
         } else if (totalSim < totalNao) {
-            return "Rejeitada!";
+            return ResultadoEnum.REJEITADO;
         } else {
-            return "Empate!";
+            return ResultadoEnum.EMPATE;
         }
     }
 }
