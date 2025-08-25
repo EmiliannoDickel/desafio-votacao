@@ -1,7 +1,6 @@
 package com.desafio.votacao.controller;
-import com.desafio.votacao.dto.ResultadoVotacao;
+import com.desafio.votacao.dto.ResultadoVotacaoDTO;
 import com.desafio.votacao.model.Voto;
-import com.desafio.votacao.repository.PautaRepository;
 import com.desafio.votacao.service.VotoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -24,8 +23,8 @@ public class VotoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResultadoVotacao> getResultado(@PathVariable Long id) {
-        ResultadoVotacao resultado = votoService.contabilizarVotos(id);
+    public ResponseEntity<ResultadoVotacaoDTO> getResultado(@PathVariable Long id) {
+        ResultadoVotacaoDTO resultado = votoService.contabilizarVotos(id);
         return ResponseEntity.ok(resultado);
     }
 }
