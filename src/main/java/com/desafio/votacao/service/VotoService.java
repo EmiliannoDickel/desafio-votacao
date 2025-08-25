@@ -1,7 +1,7 @@
 package com.desafio.votacao.service;
 
-import com.desafio.votacao.dto.ResultadoVotacao;
-import com.desafio.votacao.enums.EscolhaVoto;
+import com.desafio.votacao.dto.ResultadoVotacaoDTO;
+import com.desafio.votacao.enums.EscolhaVotoEnum;
 import com.desafio.votacao.exception.PautaNaoEncontradaException;
 import com.desafio.votacao.exception.SessaoFechadaException;
 import com.desafio.votacao.exception.VotoJaRegistradoException;
@@ -42,14 +42,14 @@ public class VotoService {
         votoRepository.save(voto);
     }
 
-    public ResultadoVotacao contabilizarVotos (Long pautaId){
+    public ResultadoVotacaoDTO contabilizarVotos (Long pautaId){
         Pauta pauta = pautaRepository.findById(pautaId).orElseThrow(() -> new PautaNaoEncontradaException("Pauta não encotrada"));
         List<Voto> votos = votoRepository.findByPautaId(pautaId);
 
-        long totalSim = votos.stream().filter(v -> v.getVoto() == EscolhaVoto.SIM).count();
-        long totalNao = votos.stream().filter(v -> v.getVoto() == EscolhaVoto.NAO).count();
+        long totalSim = votos.stream().filter(v -> v.getVoto() == EscolhaVotoEnum.SIM).count();
+        long totalNao = votos.stream().filter(v -> v.getVoto() == EscolhaVotoEnum.NAO).count();
 
-        return new ResultadoVotacao (pautaId, pauta.getTitulo(), totalSim, totalNao);
+        return new ResultadoVotacaoDTO(pautaId, pauta.getTitulo(), totalSim, totalNao);
     }
 
 }
