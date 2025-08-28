@@ -1,5 +1,7 @@
 package com.desafio.votacao.service;
 
+import com.desafio.votacao.dto.CriarSessaoDTO;
+import com.desafio.votacao.dto.SessaoResultadoDTO;
 import com.desafio.votacao.exception.PautaNaoEncontradaException;
 import com.desafio.votacao.exception.SessaoFechadaException;
 import com.desafio.votacao.exception.SessaoJaAbertaException;
@@ -21,7 +23,7 @@ public class SessaoVotacaoService {
         this.pautaRepository = pautaRepository;
     }
 
-    public SessaoVotacao abrirSessao(Long id, Integer duracaoPauta) {
+    public SessaoResultadoDTO abrirSessao(Long id, Integer duracaoPauta) {
         Pauta pauta = pautaRepository.findById(id).orElseThrow(()-> new PautaNaoEncontradaException("Pauta não encontrada"));
         SessaoVotacao sessao = pauta.getSessao();
         if (sessao != null) {
@@ -31,7 +33,6 @@ public class SessaoVotacaoService {
                 throw new SessaoFechadaException("Sessão já foi fechada para esta pauta!");
             }
         }
-
         LocalDateTime agora = LocalDateTime.now();
         LocalDateTime duracao = agora.plusMinutes(duracaoPauta != null ? duracaoPauta : 1);
         SessaoVotacao novaSessao = SessaoVotacao.builder()
@@ -41,7 +42,7 @@ public class SessaoVotacaoService {
                 .build();
         pauta.setSessao(novaSessao);
         pautaRepository.save(pauta);
-        return novaSessao;
+        return SessaoResultadoDTO.deSessao(novaSessao);
     }
 
 }
