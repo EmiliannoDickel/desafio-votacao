@@ -1,6 +1,7 @@
 package com.desafio.votacao.dto;
 
 import com.desafio.votacao.model.Pauta;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -12,11 +13,10 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties()
 public class CriarPautaDTO {
-    @NotNull(message = "Campo título não pode ser Null")
     @NotBlank(message = "Campo título não pode ser Vazio")
     private String titulo;
-    @NotNull(message = "Campo descrição não pode ser Null")
     @NotBlank(message = "Campo descrição não pode ser Vazio")
     private String descricao;
 
